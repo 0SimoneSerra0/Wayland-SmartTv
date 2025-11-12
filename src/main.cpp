@@ -1,17 +1,23 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <iostream>
 
 #include "headers/metadata.h"
-
+#include "headers/backend.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
     MetaData metadata;
+    BackEnd backend;
 
     QQmlApplicationEngine engine;
+
+    engine.rootContext()->setContextProperty("metaData", &metadata);
+    engine.rootContext()->setContextProperty("backEnd", &backend);
+
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,
@@ -22,7 +28,6 @@ int main(int argc, char *argv[])
 
     QObject *root = engine.rootObjects().first();
     engine.rootContext()->setContextProperty("MainWindow", root);
-    engine.rootContext()->setContextProperty("metaData", &metadata);
 
     return app.exec();
 }

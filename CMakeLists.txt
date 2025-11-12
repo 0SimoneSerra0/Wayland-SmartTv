@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick WaylandCompositor)
 find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
@@ -23,6 +24,8 @@ qt_add_qml_module(appwayland-based-smart-tv
         src/qml/WindowManager.qml
         src/qml/SideBar.qml
         SOURCES src/headers/metadata.h src/metadata.cpp
+        QML_FILES
+        SOURCES src/headers/backend.h src/backend.cpp
 )
 
 
@@ -42,6 +45,7 @@ target_link_libraries(appwayland-based-smart-tv
     PRIVATE Qt6::Quick
     PRIVATE Qt6::WaylandCompositor
 )
+target_link_libraries(appwayland-based-smart-tv PRIVATE Qt6::Core)
 target_link_libraries(appwayland-based-smart-tv PRIVATE Qt6::Core)
 
 include(GNUInstallDirs)

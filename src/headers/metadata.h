@@ -14,9 +14,12 @@ public:
 public slots:
     QString getDate();
     QString getTime();
+    QString getSocketName();
+
 
 private:
     static QLocale _locale;
+    static const QString _socket_name;
 
 };
 

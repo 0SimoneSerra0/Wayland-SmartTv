@@ -7,50 +7,52 @@ import QtWayland.Compositor.IviApplication
 import QtQuick.Window
 
 WaylandCompositor {
-    //! [wayland output]
 
-    socketName: "wayland-1"
+    socketName: metaData.getSocketName();
 
     WaylandOutput {
         sizeFollowsWindow: true
         window: Window {
+            id: window
             width: 1024
             height: 768
             visible: true
 
-            Rectangle {
-                id: mainArea
+            HomeScreen{
+                id: home
                 anchors.fill: parent
-                HomeScreen{
-                    anchors.fill: parent
-                }
+
             }
 
         }
     }
-    //! [wayland output]
+
     Component {
         id: chromeComponent
         ShellSurfaceItem {
             anchors.fill: parent
-            onSurfaceDestroyed: destroy()
-            //! [resizing]
+            onSurfaceDestroyed:
+                () => {
+                    destroy()
+                    home.visible = true;
+                }
+
             onWidthChanged: handleResized()
             onHeightChanged: handleResized()
             function handleResized() {
                 if (width > 0 && height > 0)
                     shellSurface.sendConfigure(Qt.size(width, height));
             }
-            //! [resizing]
         }
     }
 
-    //! [connecting]
+
     IviApplication {
-        onIviSurfaceCreated: (iviSurface) =>  {
-            var item = chromeComponent.createObject(mainArea, { "shellSurface": iviSurface } );
-            item.handleResized();
-        }
+        onIviSurfaceCreated:
+            (iviSurface) =>  {
+                var item = chromeComponent.createObject(window, { "shellSurface": iviSurface } );
+                home.visible = false;
+                item.handleResized();
+            }
     }
-    //! [connecting]
 }

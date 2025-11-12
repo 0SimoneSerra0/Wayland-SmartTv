@@ -10,7 +10,8 @@ Rectangle {
     border.color: highlighted ? "#00adee" : (hovered ? "#fff" : "transparent")
     border.width: 2
 
-    property string appName
+    required property string appName
+    required property string appProcess
     property string iconSource
     property bool hovered: false
     property bool highlighted: false
@@ -36,6 +37,9 @@ Rectangle {
         hoverEnabled: true
         onEntered: tile.hovered = true
         onExited: tile.hovered = false
-        onClicked: tile.launched("WAYLAND_DISPLAY=wayland-1 QT_WAYLAND_SHELL=ivi QT_IVI_SURFACE_ID=100 /bin/konsole")
+        onClicked:
+            () => {
+                backEnd.launchProcess(metaData.getSocketName(), appProcess);
+            }
     }
 }

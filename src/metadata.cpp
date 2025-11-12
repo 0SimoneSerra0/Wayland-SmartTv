@@ -2,8 +2,10 @@
 
 
 QLocale MetaData::_locale = QLocale::system();
+const QString MetaData::_socket_name = "wayland-smart-tv";
 
-MetaData::MetaData() {
+MetaData::MetaData()
+{
 
 }
 
@@ -22,3 +24,10 @@ QString MetaData::getTime()
 {
     return _locale.toString(QDateTime::currentDateTime().time(), QLocale::ShortFormat);
 }
+
+QString MetaData::getSocketName()
+{
+    return _socket_name;
+}
+
+
