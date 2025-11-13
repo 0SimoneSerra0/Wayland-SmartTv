@@ -26,6 +26,7 @@ qt_add_qml_module(appwayland-based-smart-tv
         SOURCES src/headers/metadata.h src/metadata.cpp
         QML_FILES
         SOURCES src/headers/backend.h src/backend.cpp
+        QML_FILES src/qml/AppList.qml
 )
 
 

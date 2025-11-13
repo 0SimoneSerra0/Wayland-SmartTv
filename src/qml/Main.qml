@@ -22,6 +22,7 @@ WaylandCompositor {
                 id: home
                 anchors.fill: parent
 
+                onVisibleChanged: visible ? forceActiveFocus() : null;
             }
 
         }

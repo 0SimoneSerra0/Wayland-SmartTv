@@ -15,3 +15,23 @@ void BackEnd::launchProcess(QString wayland_socket, QString process_name)
     proc->setProgram(process_name);
     proc->start();
 }
+
+
+void BackEnd::saveSettings(const QString &path, const QJsonObject &data) {
+    QFile file(path);
+    if (file.open(QIODevice::WriteOnly)) {
+        QJsonDocument doc(data);
+        file.write(doc.toJson(QJsonDocument::Compact));
+        file.close();
+    }
+}
+
+QJsonObject BackEnd::loadSettings(const QString &path) {
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly))
+        return {};
+
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+    file.close();
+    return doc.object();
+}
