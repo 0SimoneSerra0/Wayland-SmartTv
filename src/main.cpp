@@ -2,21 +2,21 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <iostream>
+#include <QtWebView/QtWebView>
 
-#include "headers/metadata.h"
 #include "headers/backend.h"
+#include "headers/webview.h"
 
 int main(int argc, char *argv[])
 {
+
     QGuiApplication app(argc, argv);
 
-    MetaData metadata;
-    BackEnd backend;
 
     QQmlApplicationEngine engine;
 
-    engine.rootContext()->setContextProperty("metaData", &metadata);
-    engine.rootContext()->setContextProperty("backEnd", &backend);
+    engine.rootContext()->setContextProperty("backEnd", new BackEnd(&engine));
+    engine.rootContext()->setContextProperty("webUtils", new WebView(&engine));
 
     QObject::connect(
         &engine,

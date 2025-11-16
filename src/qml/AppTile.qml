@@ -39,7 +39,10 @@ Rectangle {
         onExited: tile.hovered = false
         onClicked:
             () => {
-                backEnd.launchProcess(metaData.getSocketName(), appProcess);
+                if(appProcess.indexOf("browser") === 0){
+                    backEnd.createBrowserSurface(appProcess.substring(7));
+                } else
+                    backEnd.launchProcess(metaData.getSocketName(), appProcess);
             }
     }
 }

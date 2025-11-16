@@ -19,13 +19,13 @@ ListView {
 
     onFocusChanged: function() {
         if(focus){
-            customHighLight.opacity = 1;
-            currentItem.scale = 1.1
+            // customHighLight.opacity = 1;
+            // currentItem.scale = 1.1
             currentItem.y -= currentItem.height * 0.1;
         }else{
-            customHighLight.opacity = 0;
-            currentItem.scale = 1
-            currentItem.y =0;
+            // customHighLight.opacity = 0;
+            // currentItem.scale = 1
+            currentItem.y = 0;
         }
     }
 
@@ -36,8 +36,10 @@ ListView {
             oldCurrentItem.y = 0;
         }
 
-        currentItem.scale= 1.1
-        currentItem.y -= currentItem.height * 0.1;
+        if(focus){
+            currentItem.scale= 1.1
+            currentItem.y -= currentItem.height * 0.1;
+        }
         oldCurrentItem = currentItem
     }
 
@@ -53,6 +55,8 @@ ListView {
         color: "white"
         radius: height / 2
 
+        opacity: appList.focus ? 1 : 0
+
         Behavior on x{
             NumberAnimation {
                 property: "x"
@@ -66,12 +70,6 @@ ListView {
                 property: "opacity"
                 duration: root.highlightMoveDuration
                 easing.type: Easing.InOutQuad
-            }
-
-            NumberAnimation {
-                targets: [object]
-                properties: "name"
-                duration: 200
             }
         }
     }
@@ -148,8 +146,8 @@ ListView {
     ListModel{
         id: appModel
         ListElement{
-            name: "konsole"
-            process: "/bin/konsole"
+            name: "YouTube"
+            process: "browserhttps://www.youtube.com/"
             icon: ""
         }
         ListElement{

@@ -21,7 +21,7 @@ Item {
             id: timeText
             x: (parent.width - width)/2
             y: height/2
-            text: metaData.getTime()
+            text: backEnd.getTime()
 
             font.pointSize: parent.width*0.15
             font.family: "Lato"
@@ -40,16 +40,17 @@ Item {
             id: front
             color: Qt.lighter(parent.color)
             width: parent.width
-            height: 200
+            height: root.height * 0.4
 
 
             Text{
                 id: dateText
                 anchors.right: front.right
                 anchors.bottom: front.bottom
-                text: metaData.getDate()
+                text: backEnd.getDate()
 
                 font.pointSize: Math.max(Window.width*0.01, 11)
+                font.family: "Lato"
                 color: "white"
             }
 
@@ -59,10 +60,10 @@ Item {
                 running: root.visible
                 onTriggered:
                     () => {
-                        if(timeText.text !== metaData.getTime())
-                            timeText.text = metaData.getTime();
-                        if(dateText.text !== metaData.getDate())
-                            dateText.text = metaData.getDate();
+                        if(timeText.text !== backEnd.getTime())
+                            timeText.text = backEnd.getTime();
+                        if(dateText.text !== backEnd.getDate())
+                            dateText.text = backEnd.getDate();
                     }
             }
         }

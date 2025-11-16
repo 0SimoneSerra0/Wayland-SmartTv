@@ -6,14 +6,17 @@ import QtWayland.Compositor
 import QtWayland.Compositor.IviApplication
 import QtQuick.Window
 
-WaylandCompositor {
+import "dynamicUtils.js" as DynamicUtils
 
-    socketName: metaData.getSocketName();
+WaylandCompositor {
+    id: compositor
+
+    socketName: backEnd.getSocketName();
 
     WaylandOutput {
         sizeFollowsWindow: true
         window: Window {
-            id: window
+            id: mainWindow
             width: 1024
             height: 768
             visible: true
@@ -24,7 +27,6 @@ WaylandCompositor {
 
                 onVisibleChanged: visible ? forceActiveFocus() : null;
             }
-
         }
     }
 
@@ -48,12 +50,28 @@ WaylandCompositor {
     }
 
 
+
     IviApplication {
+        id: iviApp
         onIviSurfaceCreated:
             (iviSurface) =>  {
                 var item = chromeComponent.createObject(window, { "shellSurface": iviSurface } );
                 home.visible = false;
                 item.handleResized();
             }
+    }
+
+    Connections{
+        target: backEnd
+        function onCreateBrowserSurface(default_url){
+            DynamicUtils.renderBrowser(default_url, mainWindow);
+            home.visible = false;
+        }
+    }
+    Connections{
+        target: webUtils
+        function onViewDestroyed(){
+            home.visible = true;
+        }
     }
 }
