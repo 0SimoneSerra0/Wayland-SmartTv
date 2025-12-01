@@ -1,8 +1,33 @@
 #include "headers/backend.h"
 
+QString BackEnd::web_data_path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/webengine/";
+
 BackEnd::BackEnd(QObject *parent)
     : QObject{parent}
-{}
+{
+    QDir().mkpath(web_data_path);
+
+
+    // In order to let the QML components get the initial date and time before the timer send the first timeout
+    onClockTimeout();
+
+    _date_time_timer = new QTimer(this);
+    connect(_date_time_timer, &QTimer::timeout,
+            this, &BackEnd::onClockTimeout);
+    _date_time_timer->start(CLOCK_UPDATE_INTERVALL);
+
+
+    _palette = {
+                { "mainColor", "#0c1114"},
+                { "secondaryColor", "#11171b"},
+                { "textColor", "#ffffff"},
+                };
+}
+
+QVariantMap BackEnd::palette()
+{
+    return _palette.toVariantMap();
+}
 
 void BackEnd::launchProcess(QString wayland_socket, QString process_name)
 {
@@ -19,9 +44,14 @@ void BackEnd::launchProcess(QString wayland_socket, QString process_name)
 
     QObject::connect(proc, SIGNAL( finished(int, QProcess::ExitStatus) ),
                      this, SLOT( onProcessFinished(int, QProcess::ExitStatus) )
-                    );
+                     );
 
     proc->start();
+}
+
+QString BackEnd::getWebDataPath()
+{
+    return web_data_path;
 }
 
 
@@ -55,11 +85,7 @@ void BackEnd::onProcessFinished(int exit_code, QProcess::ExitStatus exit_status)
     proc->deleteLater();
 }
 
-
-QLocale BackEnd::_locale = QLocale::system();
-const QString BackEnd::_socket_name = "wayland-smart-tv";
-
-QString BackEnd::getDate()
+void BackEnd::onClockTimeout()
 {
     QString date = _locale.toString(QDateTime::currentDateTime().date(), QLocale::LongFormat);
 
@@ -67,12 +93,27 @@ QString BackEnd::getDate()
     date[0] = QString(date[0]).toUpper()[0];
     date[date.indexOf(" ", 4) + 1] = QString(date[date.indexOf(" ", 4) + 1]).toUpper()[0];
 
-    return date;
+    if(_date != date){
+        _date = date;
+        emit updateDate(_date);
+    }
+
+    _time = _locale.toString(QDateTime::currentDateTime().time(), QLocale::ShortFormat);
+    emit updateTime(_time);
+}
+
+
+QLocale BackEnd::_locale = QLocale::system();
+const QString BackEnd::_socket_name = "wayland-smart-tv";
+
+QString BackEnd::getDate()
+{
+    return _date;
 }
 
 QString BackEnd::getTime()
 {
-    return _locale.toString(QDateTime::currentDateTime().time(), QLocale::ShortFormat);
+    return _time;
 }
 
 QString BackEnd::getSocketName()

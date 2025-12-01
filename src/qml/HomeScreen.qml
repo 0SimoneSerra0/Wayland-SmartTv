@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Shapes
 
+import "Component"
+
 Item {
     id: root
     focus: true
@@ -17,15 +19,11 @@ Item {
         id: sidebar
         z: 100
 
-        Text{
+        Clock{
             id: timeText
-            x: (parent.width - width)/2
+            anchors.horizontalCenter: parent.horizontalCenter
             y: height/2
-            text: backEnd.getTime()
-
-            font.pointSize: parent.width*0.15
-            font.family: "Lato"
-            color: "white"
+            font.pointSize: Math.max(parent.width*0.18, 11)
         }
     }
 
@@ -33,7 +31,7 @@ Item {
         id: main
         width: parent.width
         height: parent.height
-        color: "#0c1114"
+        color: backEnd.palette().mainColor
 
 
         Rectangle{
@@ -43,28 +41,12 @@ Item {
             height: root.height * 0.4
 
 
-            Text{
+            Date{
                 id: dateText
                 anchors.right: front.right
                 anchors.bottom: front.bottom
-                text: backEnd.getDate()
 
                 font.pointSize: Math.max(Window.width*0.01, 11)
-                font.family: "Lato"
-                color: "white"
-            }
-
-            Timer{
-                interval: 30000
-                repeat: true
-                running: root.visible
-                onTriggered:
-                    () => {
-                        if(timeText.text !== backEnd.getTime())
-                            timeText.text = backEnd.getTime();
-                        if(dateText.text !== backEnd.getDate())
-                            dateText.text = backEnd.getDate();
-                    }
             }
         }
 

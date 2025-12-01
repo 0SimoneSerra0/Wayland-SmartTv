@@ -30,9 +30,13 @@ function finishCreation() {
 
         obj = component.createObject(parent, properties);
 
+
         if (obj === null) {
             console.log("Error creating object");
+            return;
         }
+
+        compositor.currentSurface = obj;
     } else if (component.status === Component.Error) {
         console.log("Error loading component:", component.errorString());
     }

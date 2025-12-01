@@ -9,7 +9,7 @@ Rectangle{
     width: Window.width * 0.07 * widthScaling
     height: Window.height
 
-    color: "#11171b"
+    color: backEnd.palette().secondaryColor
 
 
     HoverHandler{

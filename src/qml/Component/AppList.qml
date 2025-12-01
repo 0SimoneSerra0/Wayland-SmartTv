@@ -19,12 +19,8 @@ ListView {
 
     onFocusChanged: function() {
         if(focus){
-            // customHighLight.opacity = 1;
-            // currentItem.scale = 1.1
             currentItem.y -= currentItem.height * 0.1;
         }else{
-            // customHighLight.opacity = 0;
-            // currentItem.scale = 1
             currentItem.y = 0;
         }
     }
@@ -55,7 +51,7 @@ ListView {
         color: "white"
         radius: height / 2
 
-        opacity: appList.focus ? 1 : 0
+        opacity: root.focus ? 1 : 0
 
         Behavior on x{
             NumberAnimation {
@@ -83,9 +79,8 @@ ListView {
         }
     }
 
-    Keys.onLeftPressed: changeCurrentIndex(-1)
-    Keys.onRightPressed: changeCurrentIndex(1)
     Keys.onTabPressed: changeCurrentIndex(1)
+
 
     WheelHandler {
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
@@ -126,6 +121,8 @@ ListView {
                 easing.type: Easing.InOutQuad
             }
         }
+
+        Keys.onReturnPressed: tile.launchApp()
 
         Rectangle{
             width: tile.width

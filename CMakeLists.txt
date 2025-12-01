@@ -21,17 +21,23 @@ qt_add_qml_module(appwayland-based-smart-tv
     QML_FILES
         src/qml/Main.qml
         src/qml/HomeScreen.qml
-        src/qml/AppTile.qml
         src/qml/WindowManager.qml
-        src/qml/SideBar.qml
-        src/qml/AppList.qml
         src/qml/BrowserWindow.qml
         src/qml/dynamicUtils.js
+        src/qml/Component/AppList.qml
+        src/qml/Component/AppTile.qml
+        src/qml/Component/SideBar.qml
+        src/qml/Component/ToolBar.qml
     SOURCES
-
         src/headers/backend.h src/backend.cpp
-        SOURCES src/headers/webview.h src/webview.cpp
-        RESOURCES rsc/icons/home-dark.png rsc/icons/home-light.png
+        src/headers/webview.h src/webview.cpp
+
+    QML_FILES src/qml/Component/Basics/ShadowRectangle.qml
+    QML_FILES src/qml/Component/Clock.qml
+    QML_FILES src/qml/Component/Date.qml
+    RESOURCES rsc/sprite-animation/black-home-icon.png
+    RESOURCES resources.qrc
+    RESOURCES rsc/sprite-animation/white-home-icon.png
 )
 
 

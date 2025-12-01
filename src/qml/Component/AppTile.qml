@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 
 Rectangle {
-    id: tile
+    id: root
     width: Math.max(Window.width * 0.07, 50)
     height: width
     radius: width * 0.1
@@ -35,14 +35,15 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
-        onEntered: tile.hovered = true
-        onExited: tile.hovered = false
-        onClicked:
-            () => {
-                if(appProcess.indexOf("browser") === 0){
-                    backEnd.createBrowserSurface(appProcess.substring(7));
-                } else
-                    backEnd.launchProcess(metaData.getSocketName(), appProcess);
-            }
+        onEntered: root.hovered = true
+        onExited: root.hovered = false
+        onClicked: launchApp()
+    }
+
+    function launchApp() {
+        if(appProcess.indexOf("browser") === 0){
+            backEnd.createBrowserSurface(appProcess.substring(7));
+        } else
+            backEnd.launchProcess(backEnd.getSocketName(), appProcess);
     }
 }

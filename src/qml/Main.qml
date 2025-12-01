@@ -5,27 +5,63 @@ import QtQuick
 import QtWayland.Compositor
 import QtWayland.Compositor.IviApplication
 import QtQuick.Window
+import QtWebEngine
 
 import "dynamicUtils.js" as DynamicUtils
+
+import "Component"
 
 WaylandCompositor {
     id: compositor
 
     socketName: backEnd.getSocketName();
 
+    property var currentSurface: null
+
+    WebEngineProfile {
+        id: persistentProfile
+        persistentCookiesPolicy: WebEngineProfile.ForcePersistentCookies
+        persistentStoragePath: backEnd.getWebDataPath()
+        cachePath: backEnd.getWebDataPath() + "cache/"
+        httpCacheType: WebEngineProfile.DiskHttpCache
+    }
+
     WaylandOutput {
         sizeFollowsWindow: true
+
         window: Window {
             id: mainWindow
             width: 1024
             height: 768
             visible: true
 
+            ToolBar{
+                id: toolBar
+                height: parent.height * 0.1
+                z: 1
+            }
+
             HomeScreen{
                 id: home
                 anchors.fill: parent
 
                 onVisibleChanged: visible ? forceActiveFocus() : null;
+            }
+
+            Shortcut{
+                sequence: "Ctrl+Q"
+                onActivated: {
+                    if(compositor.currentSurface && compositor.currentSurface !== home){
+                        compositor.currentSurface.destroy();
+                    }
+                }
+            }
+
+            Shortcut{
+                sequence: "Alt+M"
+                onActivated: {
+                    toolBar.hide = !toolBar.hide
+                }
             }
         }
     }
@@ -34,11 +70,11 @@ WaylandCompositor {
         id: chromeComponent
         ShellSurfaceItem {
             anchors.fill: parent
-            onSurfaceDestroyed:
-                () => {
-                    destroy()
-                    home.visible = true;
-                }
+            onSurfaceDestroyed: {
+                destroy()
+            }
+
+            Component.onDestruction: home.visible = true
 
             onWidthChanged: handleResized()
             onHeightChanged: handleResized()
@@ -55,9 +91,12 @@ WaylandCompositor {
         id: iviApp
         onIviSurfaceCreated:
             (iviSurface) =>  {
-                var item = chromeComponent.createObject(window, { "shellSurface": iviSurface } );
+                var item = chromeComponent.createObject(mainWindow, { "shellSurface": iviSurface } );
                 home.visible = false;
                 item.handleResized();
+                item.forceActiveFocus();
+
+                compositor.currentSurface = item;
             }
     }
 
@@ -72,6 +111,7 @@ WaylandCompositor {
         target: webUtils
         function onViewDestroyed(){
             home.visible = true;
+            compositor.currentSurface = home;
         }
     }
 }
