@@ -69,6 +69,7 @@ signals:
     void createBrowserSurface(QString default_url);
     void updateTime(QString new_time);
     void updateDate(QString new_date);
+    void goHome();
 };
 
 #endif // BACKEND_H

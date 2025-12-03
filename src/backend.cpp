@@ -21,6 +21,7 @@ BackEnd::BackEnd(QObject *parent)
                 { "mainColor", "#0c1114"},
                 { "secondaryColor", "#11171b"},
                 { "textColor", "#ffffff"},
+                { "highlightColor", "#888888"},
                 };
 }
 

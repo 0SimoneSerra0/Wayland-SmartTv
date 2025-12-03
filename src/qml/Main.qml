@@ -51,9 +51,7 @@ WaylandCompositor {
             Shortcut{
                 sequence: "Ctrl+Q"
                 onActivated: {
-                    if(compositor.currentSurface && compositor.currentSurface !== home){
-                        compositor.currentSurface.destroy();
-                    }
+                    destroySurface();
                 }
             }
 
@@ -61,6 +59,12 @@ WaylandCompositor {
                 sequence: "Alt+M"
                 onActivated: {
                     toolBar.hide = !toolBar.hide
+                }
+            }
+
+            function destroySurface(){
+                if(compositor.currentSurface && compositor.currentSurface !== home){
+                    compositor.currentSurface.destroy();
                 }
             }
         }
@@ -105,6 +109,9 @@ WaylandCompositor {
         function onCreateBrowserSurface(default_url){
             DynamicUtils.renderBrowser(default_url, mainWindow);
             home.visible = false;
+        }
+        function onGoHome(){
+            mainWindow.destroySurface();
         }
     }
     Connections{
