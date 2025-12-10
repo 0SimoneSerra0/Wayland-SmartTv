@@ -37,13 +37,6 @@ Rectangle {
         hoverEnabled: true
         onEntered: root.hovered = true
         onExited: root.hovered = false
-        onClicked: launchApp()
-    }
-
-    function launchApp() {
-        if(appProcess.indexOf("browser") === 0){
-            backEnd.createBrowserSurface(appProcess.substring(7));
-        } else
-            backEnd.launchProcess(backEnd.getSocketName(), appProcess);
+        onClicked: backEnd.launchApp(backEnd.getSocketName(), appProcess);
     }
 }

@@ -7,8 +7,10 @@
 #include <QObject>
 #include <QProcess>
 #include <QFile>
+
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 
 #include <QLocale>
 #include <QDateTime>
@@ -25,11 +27,12 @@ class BackEnd : public QObject
     Q_OBJECT
 public:
     explicit BackEnd(QObject *parent = nullptr);
+    ~BackEnd();
 
     Q_INVOKABLE QVariantMap palette();
 
 public slots:
-    void launchProcess(QString wayland_socket, QString process_name);
+    void launchApp(QString wayland_socket, QString process_name);
     QString getWebDataPath();
 
     QString getDate();
@@ -41,7 +44,7 @@ private:
     struct RecentActivity{
         QString name;
         QString img;
-        QString activityCommand;
+        QString command;
     };
 
     std::vector<RecentActivity> recentActivities;
@@ -60,6 +63,17 @@ private:
 
     void saveSettings(const QString &path, const QJsonObject &data);
     QJsonObject loadSettings(const QString &path);
+
+
+    // Settings variable
+
+    /*
+        Settings structure:
+            - recent = QJsonArray< QJsonArray< 3 * QString > >
+    */
+    QJsonObject settings;
+
+    const QString _settings_path = "settings.json";
 
 private slots:
     void onProcessFinished(int exit_code, QProcess::ExitStatus exit_status);

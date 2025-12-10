@@ -23,31 +23,56 @@ BackEnd::BackEnd(QObject *parent)
                 { "textColor", "#ffffff"},
                 { "highlightColor", "#888888"},
                 };
+
+    settings = loadSettings(_settings_path);
 }
+
+
+BackEnd::~BackEnd(){
+    saveSettings(_settings_path, settings);
+}
+
 
 QVariantMap BackEnd::palette()
 {
     return _palette.toVariantMap();
 }
 
-void BackEnd::launchProcess(QString wayland_socket, QString process_name)
+void BackEnd::launchApp(QString wayland_socket, QString process_command)
 {
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    env.insert("QT_WAYLAND_SHELL_INTEGRATION", "ivi-shell");
-    env.insert("WAYLAND_DISPLAY", wayland_socket);
+    if(process_command.indexOf("browser") == 0){
 
-    QProcess *proc = new QProcess();
+        emit createBrowserSurface(process_command.mid(7));
 
-    processes.push_back(proc);
+    }else{
 
-    proc->setProcessEnvironment(env);
-    proc->setProgram(process_name);
+        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+        env.insert("QT_WAYLAND_SHELL_INTEGRATION", "ivi-shell");
+        env.insert("WAYLAND_DISPLAY", wayland_socket);
 
-    QObject::connect(proc, SIGNAL( finished(int, QProcess::ExitStatus) ),
-                     this, SLOT( onProcessFinished(int, QProcess::ExitStatus) )
-                     );
+        QProcess *proc = new QProcess();
 
-    proc->start();
+        processes.push_back(proc);
+
+        proc->setProcessEnvironment(env);
+        proc->setProgram(process_command);
+
+        QObject::connect(proc, SIGNAL( finished(int, QProcess::ExitStatus) ),
+                         this, SLOT( onProcessFinished(int, QProcess::ExitStatus) )
+                         );
+
+        proc->start();
+
+    }
+
+    if(settings.find("recent") == settings.end()){
+        settings.insert("recent", QJsonArray());
+    }
+    QJsonArray recent = settings["recent"].toArray();
+
+    recent.append(QJsonArray({process_command, "", process_command}));
+
+    settings["recent"] = recent;
 }
 
 QString BackEnd::getWebDataPath()
@@ -58,7 +83,13 @@ QString BackEnd::getWebDataPath()
 
 void BackEnd::saveSettings(const QString &path, const QJsonObject &data) {
     QFile file(path);
-    if (file.open(QIODevice::WriteOnly)) {
+
+    if(!file.exists())
+        file.open(QIODevice::NewOnly | QIODevice::WriteOnly);
+    else
+        file.open(QIODevice::WriteOnly);
+
+    if (file.isOpen()) {
         QJsonDocument doc(data);
         file.write(doc.toJson(QJsonDocument::Compact));
         file.close();
